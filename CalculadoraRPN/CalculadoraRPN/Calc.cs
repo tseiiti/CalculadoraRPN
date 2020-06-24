@@ -1,36 +1,103 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 
 namespace CalculadoraRPN {
 	class Calc {
+		List<Operacao> operacoes = new List<Operacao>();
 
-		public static void teste() {
-			ConsoleKeyInfo cki;
-			// Prevent example from ending if CTL+C is pressed.
+		public void executa() {
+			ConsoleKeyInfo keyInfo;
+			string num = "";
+
+			// Trata CTL+C
 			Console.TreatControlCAsInput = true;
 
-			Console.WriteLine("Press any combination of CTL, ALT, and SHIFT, and a console key.");
-			Console.WriteLine("Press the Escape (Esc) key to quit: \n");
 			do {
-				cki = Console.ReadKey(true);
-				Console.Write(" --- You pressed ");
-				if ((cki.Modifiers & ConsoleModifiers.Control) != 0) Console.Write("CTL+");
-				if ((cki.Modifiers & ConsoleModifiers.Alt) != 0) Console.Write("ALT+");
-				if ((cki.Modifiers & ConsoleModifiers.Shift) != 0) Console.Write("SHIFT+");
+				keyInfo = Console.ReadKey(true);
 
-				Console.WriteLine(cki.Key.ToString());
+				validaTecla(keyInfo, ref num);
 
-			} while (cki.Key != ConsoleKey.Escape);
+				Utils._out(num);
+			} while (keyInfo.Key != ConsoleKey.Escape);
 		}
 
-		public static string _in() {
-			return Console.ReadLine();
+		void addOperacao(ref string numero, string operacao) {
+			numero = "";
+			operacoes.Add(new Operacao(numero, operacao));
+
+			foreach (var ope in operacoes) {
+				Utils._out(ope.numero.ToString());
+			}
 		}
 
-		public static void _out(string s) {
-			Console.WriteLine(s);
+		void adicao(ref string numero) {
+			if (operacoes.Count > 0) {
+				numero = operacoes[operacoes.Count - 1].adicao(numero);
+				addOperacao(ref numero, "+");
+			} else {
+				Utils._out("erro");
+				addOperacao(ref numero, "");
+			}
+		}
+
+		void validaTecla(ConsoleKeyInfo keyInfo, ref string numero) {
+			if (keyInfo.Key == ConsoleKey.D0) {
+				numero += "0";
+			} else if (keyInfo.Key == ConsoleKey.D1) {
+				numero += "1";
+			} else if (keyInfo.Key == ConsoleKey.D2) {
+				numero += "2";
+			} else if (keyInfo.Key == ConsoleKey.D3) {
+				numero += "3";
+			} else if (keyInfo.Key == ConsoleKey.D4) {
+				numero += "4";
+			} else if (keyInfo.Key == ConsoleKey.D5) {
+				numero += "5";
+			} else if (keyInfo.Key == ConsoleKey.D6) {
+				numero += "6";
+			} else if (keyInfo.Key == ConsoleKey.D7) {
+				numero += "7";
+			} else if (keyInfo.Key == ConsoleKey.D8) {
+				numero += "8";
+			} else if (keyInfo.Key == ConsoleKey.D9) {
+				numero += "9";
+			} else if (keyInfo.Key == ConsoleKey.NumPad0) {
+				numero += "0";
+			} else if (keyInfo.Key == ConsoleKey.NumPad1) {
+				numero += "1";
+			} else if (keyInfo.Key == ConsoleKey.NumPad2) {
+				numero += "2";
+			} else if (keyInfo.Key == ConsoleKey.NumPad3) {
+				numero += "3";
+			} else if (keyInfo.Key == ConsoleKey.NumPad4) {
+				numero += "4";
+			} else if (keyInfo.Key == ConsoleKey.NumPad5) {
+				numero += "5";
+			} else if (keyInfo.Key == ConsoleKey.NumPad6) {
+				numero += "6";
+			} else if (keyInfo.Key == ConsoleKey.NumPad7) {
+				numero += "7";
+			} else if (keyInfo.Key == ConsoleKey.NumPad8) {
+				numero += "8";
+			} else if (keyInfo.Key == ConsoleKey.NumPad9) {
+				numero += "9";
+			} else if (keyInfo.Key == ConsoleKey.Enter) {
+				addOperacao(ref numero, "");
+			} else if (keyInfo.Key == ConsoleKey.Add) {
+				adicao(ref numero);
+			} else if (keyInfo.Key == ConsoleKey.OemPlus) {
+				adicao(ref numero);
+			} else if (keyInfo.Key == ConsoleKey.A) {
+				foreach (var op in operacoes) {
+					Utils._out(op.numero.ToString());
+				}
+			} else {
+				Utils._out(keyInfo.Key.ToString());
+			}
+
 		}
 	}
 }

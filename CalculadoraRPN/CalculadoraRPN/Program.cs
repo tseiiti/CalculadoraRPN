@@ -3,12 +3,12 @@
 namespace CalculadoraRPN {
 	class Program {
 		static void Main(string[] args) {
-			Console.WriteLine("Hello World!");
+			Console.WriteLine("Calculadora");
 
-			Calculadora calculadora = new Calculadora();
-			calculadora.execute();
+			Calc calc = new Calc();
+			calc.executa();
 
-			Console.ReadKey();
+			//Console.ReadKey();
 		}
 	}
 }
