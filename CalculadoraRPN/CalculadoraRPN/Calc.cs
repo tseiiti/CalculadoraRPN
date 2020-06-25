@@ -10,7 +10,7 @@ namespace CalculadoraRPN {
 
 		public void executa() {
 			ConsoleKeyInfo keyInfo;
-			string num = "";
+			string numero = "";
 
 			// Trata CTL+C
 			Console.TreatControlCAsInput = true;
@@ -18,32 +18,48 @@ namespace CalculadoraRPN {
 			do {
 				keyInfo = Console.ReadKey(true);
 
-				validaTecla(keyInfo, ref num);
+				valida_tecla(keyInfo, ref numero);
 
-				Utils._out(num);
+				Utils._out(numero);
 			} while (keyInfo.Key != ConsoleKey.Escape);
 		}
 
-		void addOperacao(ref string numero, string operacao) {
-			numero = "";
-			operacoes.Add(new Operacao(numero, operacao));
-
-			foreach (var ope in operacoes) {
-				Utils._out(ope.numero.ToString());
+		void add_operacao(ref string numero) {
+			if (numero != "") {
+				operacoes.Add(new Operacao(numero));
+				numero = "";
 			}
+			exibir();
 		}
 
 		void adicao(ref string numero) {
-			if (operacoes.Count > 0) {
-				numero = operacoes[operacoes.Count - 1].adicao(numero);
-				addOperacao(ref numero, "+");
+			int count = operacoes.Count;
+
+			if (numero == "" && count > 1) {
+				numero = operacoes[count - 1].getNumero();
+				operacoes.RemoveAt(count - 1);
+				count--;
+			}
+
+			if (count > 0) {
+				operacoes[count - 1].adicao(numero);
+				numero = "";
+				exibir();
 			} else {
 				Utils._out("erro");
-				addOperacao(ref numero, "");
+				add_operacao(ref numero);
 			}
 		}
 
-		void validaTecla(ConsoleKeyInfo keyInfo, ref string numero) {
+		void exibir() {
+			Utils._out("--------------------");
+			foreach (var operacao in operacoes) {
+				Utils._out(operacao.getNumero());
+			}
+			Utils._out("--------------------");
+		}
+
+		void valida_tecla(ConsoleKeyInfo keyInfo, ref string numero) {
 			if (keyInfo.Key == ConsoleKey.D0) {
 				numero += "0";
 			} else if (keyInfo.Key == ConsoleKey.D1) {
@@ -85,15 +101,13 @@ namespace CalculadoraRPN {
 			} else if (keyInfo.Key == ConsoleKey.NumPad9) {
 				numero += "9";
 			} else if (keyInfo.Key == ConsoleKey.Enter) {
-				addOperacao(ref numero, "");
+				add_operacao(ref numero);
 			} else if (keyInfo.Key == ConsoleKey.Add) {
 				adicao(ref numero);
 			} else if (keyInfo.Key == ConsoleKey.OemPlus) {
 				adicao(ref numero);
 			} else if (keyInfo.Key == ConsoleKey.A) {
-				foreach (var op in operacoes) {
-					Utils._out(op.numero.ToString());
-				}
+				exibir();
 			} else {
 				Utils._out(keyInfo.Key.ToString());
 			}
