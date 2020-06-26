@@ -9,6 +9,13 @@ namespace CalculadoraRPN {
 	class Calc {
 		List<Operacao> operacoes = new List<Operacao>();
 
+		public Calc() {
+			for (int i = 0; i < 4; i++) {
+				string numero = "0";
+				add_operacao(ref numero);
+			}
+		}
+
 		public void executa() {
 			ConsoleKeyInfo keyInfo;
 			string numero = "";
