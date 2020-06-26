@@ -12,5 +12,9 @@ namespace CalculadoraRPN {
 		public static void _out(string s) {
 			Console.WriteLine(s);
 		}
+
+		public static void _o(string s) {
+			Console.Write(s);
+		}
 	}
 }
