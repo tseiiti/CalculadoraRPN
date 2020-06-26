@@ -75,11 +75,11 @@ namespace CalculadoraRPN {
 		void exibir() {
 			Console.Clear();
 			Console.WriteLine("Calculadora:");
-			Utils._out("----------------------------------------");
+			Utils._out("-----------------------------");
 			foreach (var operacao in operacoes) {
 				Utils._out(operacao.getNumero());
 			}
-			Utils._out("----------------------------------------");
+			Utils._out("-----------------------------");
 		}
 
 		void valida_tecla(ConsoleKeyInfo keyInfo, ref string numero) {

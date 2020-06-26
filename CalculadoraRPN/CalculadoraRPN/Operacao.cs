@@ -15,7 +15,7 @@ namespace CalculadoraRPN {
         }
 
         public string getNumero() {
-            return (new String(' ', 40 - numero.ToString().Length)) + numero.ToString();
+            return (new String(' ', 29 - numero.ToString().Length)) + numero.ToString();
         }
 
         public void adicao(decimal outro_numero) {
