@@ -34,7 +34,25 @@ namespace CalculadoraRPN {
         public void subtracao(string outro_numero) {
             if (outro_numero != "")
                 subtracao(Convert.ToDecimal(outro_numero));
-        }
+		}
 
-    }
+		public void multiplicacao(decimal outro_numero) {
+			this.numero *= outro_numero;
+		}
+
+		public void multiplicacao(string outro_numero) {
+			if (outro_numero != "")
+				multiplicacao(Convert.ToDecimal(outro_numero));
+		}
+
+		public void divisao(decimal outro_numero) {
+			this.numero /= outro_numero;
+		}
+
+		public void divisao(string outro_numero) {
+			if (outro_numero != "")
+				divisao(Convert.ToDecimal(outro_numero));
+		}
+
+	}
 }
