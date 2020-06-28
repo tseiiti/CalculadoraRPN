@@ -92,10 +92,7 @@ namespace CalculadoraRPN {
 			var aux = "";
 			var key_char = this.key.KeyChar.ToString();
 			if (this.key.Key == ConsoleKey.Spacebar) {
-				Console.WriteLine("\n{0,10}",this.operacoes[0].numero.ToString());
-				Console.WriteLine("{0,20}",this.operacoes[0].numero.ToString());
-				Console.WriteLine("{0,30}", this.operacoes[0].numero.ToString());
-				Console.WriteLine("{0,40}", this.operacoes[0].numero.ToString());
+
 			} else if (this.key.Key == ConsoleKey.Enter) {
 				add_operacao();
 			} else if ("+-*/".IndexOf(key_char) != -1) {
