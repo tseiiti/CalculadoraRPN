@@ -11,74 +11,76 @@ namespace CalculadoraRPN {
 		NumberFormatInfo format;
 		string numero;
 		int tamanho;
+		ConsoleKeyInfo key;
 
 		public Calc() {
-			operacoes = new List<Operacao>();
-			format = new CultureInfo("pt-BR").NumberFormat;
-			format.NumberDecimalSeparator = ".";
-			format.NumberGroupSeparator = ",";
-			numero = "";
-			tamanho = 41;
+			this.operacoes = new List<Operacao>();
+			this.format = new CultureInfo("pt-BR").NumberFormat;
+			//format.NumberDecimalSeparator = ".";
+			//format.NumberGroupSeparator = ",";
+			this.numero = "";
+			this.tamanho = 41;
 		}
 
 		public void executa() {
-			ConsoleKeyInfo key;
-
 			// Trata CTL+C
 			Console.TreatControlCAsInput = true;
 
 			exibir();
 			do {
-				key = Console.ReadKey(true);
-				valida_tecla(key);
-			} while (key.Key != ConsoleKey.Escape);
+				this.key = Console.ReadKey(true);
+				valida_tecla();
+			} while (this.key.Key != ConsoleKey.Escape);
 		}
 
 		void exibir() {
 			Console.Clear();
 			Console.WriteLine("Calculadora RPN:");
-			Console.WriteLine(new String('-', tamanho));
+			Console.WriteLine(new String('-', this.tamanho));
+			var count = this.operacoes.Count;
+			var posic = "{0, " + this.tamanho.ToString() + "}";
 			for (int i = 0; i < 4; i++) {
-				if (operacoes.Count > 3 - i)
-					Console.WriteLine(operacoes[operacoes.Count - (4 - i)].get_numero(format, tamanho));
-				else
-					Console.WriteLine("");
+				var num = "";
+				if (count > 3 - i)
+					num = this.operacoes[count - 4 + i].get_numero(this.format);
+				Console.WriteLine(posic, num);
 			}
-			Console.WriteLine(new String('-', tamanho));
+			Console.WriteLine(new String('-', this.tamanho));
 		}
 
 		void add_operacao() {
-			if (numero == "" && operacoes.Count > 0) {
-				numero = operacoes[operacoes.Count - 1].get_numero(format, tamanho);
+			var count = this.operacoes.Count;
+			if (this.numero == "" && count > 0) {
+				this.numero = this.operacoes[count - 1].get_numero(this.format);
 			}
 
-			if (numero != "") {
-				operacoes.Add(new Operacao(numero, format));
-				numero = "";
+			if (this.numero != "") {
+				this.operacoes.Add(new Operacao(this.numero, this.format));
+				this.numero = "";
 			}
 			exibir();
 		}
 
 		void aritimetica(string operacao) {
-			int count = operacoes.Count;
+			int count = this.operacoes.Count;
 
-			if (numero == "" && count > 1) {
-				numero = operacoes[count - 1].get_numero(format, tamanho);
-				operacoes.RemoveAt(count - 1);
+			if (this.numero == "" && count > 1) {
+				this.numero = this.operacoes[count - 1].get_numero(this.format);
+				this.operacoes.RemoveAt(count - 1);
 				count--;
 			}
 
 			if (count > 0) {
 				if (operacao == "+") {
-					operacoes[count - 1].adicao(numero);
+					this.operacoes[count - 1].adicao(this.numero, this.format);
 				} else if (operacao == "-") {
-					operacoes[count - 1].subtracao(numero);
+					this.operacoes[count - 1].subtracao(this.numero, this.format);
 				} else if (operacao == "*") {
-					operacoes[count - 1].multiplicacao(numero);
+					this.operacoes[count - 1].multiplicacao(this.numero, this.format);
 				} else if (operacao == "/") {
-					operacoes[count - 1].divisao(numero);
+					this.operacoes[count - 1].divisao(this.numero, this.format);
 				}
-				numero = "";
+				this.numero = "";
 				exibir();
 			} else {
 				Console.WriteLine("erro");
@@ -86,14 +88,18 @@ namespace CalculadoraRPN {
 			}
 		}
 
-		void valida_tecla(ConsoleKeyInfo key) {
-			string aux = "";
-			if (key.Key == ConsoleKey.Spacebar) {
-
-			} else if (key.Key == ConsoleKey.Enter) {
+		void valida_tecla() {
+			var aux = "";
+			var key_char = this.key.KeyChar.ToString();
+			if (this.key.Key == ConsoleKey.Spacebar) {
+				Console.WriteLine("\n{0,10}",this.operacoes[0].numero.ToString());
+				Console.WriteLine("{0,20}",this.operacoes[0].numero.ToString());
+				Console.WriteLine("{0,30}", this.operacoes[0].numero.ToString());
+				Console.WriteLine("{0,40}", this.operacoes[0].numero.ToString());
+			} else if (this.key.Key == ConsoleKey.Enter) {
 				add_operacao();
-			} else if ("+-*/".IndexOf(key.KeyChar.ToString()) != -1) {
-				aritimetica(key.KeyChar.ToString());
+			} else if ("+-*/".IndexOf(key_char) != -1) {
+				aritimetica(key_char);
 
 			//} else if (key.Key == ConsoleKey.Add) {
 			//	aritimetica("+");
@@ -112,14 +118,15 @@ namespace CalculadoraRPN {
 			//} else if (key.Key == ConsoleKey.Oem2) {
 			//	aritimetica("/");
 
-			} else if (key.Key == ConsoleKey.Backspace) {
+			} else if (this.key.Key == ConsoleKey.Backspace) {
 				aux = "\b";
 
-			} else if (char.IsDigit(key.KeyChar)) { //números
-				aux = key.KeyChar.ToString();
-			} else if (char.IsPunctuation(key.KeyChar)) { //pontos
-				if (key.KeyChar.ToString() == format.NumberDecimalSeparator)
-				aux = key.KeyChar.ToString();
+			} else if (char.IsDigit(this.key.KeyChar)) { //números
+				aux = key_char;
+			} else if (char.IsPunctuation(this.key.KeyChar)) { //pontos
+				if (key_char == this.format.NumberDecimalSeparator 
+						&& this.numero.IndexOf(key_char) == -1)
+					aux = key_char;
 				//} else if (keyInfo.Key == ConsoleKey.OemComma) {
 				//	aux = ",";
 				//} else if (keyInfo.Key == ConsoleKey.OemPeriod) {
@@ -128,16 +135,17 @@ namespace CalculadoraRPN {
 				//	aux = ",";
 
 			} else {
-				Console.WriteLine("\n\n" + key.Key.ToString());
+				Console.WriteLine("\n\n" + this.key.Key.ToString());
 			}
 
 			Console.Write(aux);
 
 			if (aux == "\b") {
-				if (numero.Length == 1) numero = "";
-				if (numero.Length > 1) 
-					numero = numero.Substring(0, numero.Length - 1);
-			} else numero += aux;
+				Console.Write(" \b");
+				if (this.numero.Length == 1) this.numero = "";
+				if (this.numero.Length > 1) 
+					this.numero = this.numero.Substring(0, this.numero.Length - 1);
+			} else this.numero += aux;
 		}
 	}
 }
