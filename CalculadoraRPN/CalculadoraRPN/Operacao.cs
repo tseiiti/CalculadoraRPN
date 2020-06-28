@@ -16,10 +16,9 @@ namespace CalculadoraRPN {
 
         public string get_numero(NumberFormatInfo format) {
             var num = numero.ToString("G", format);
-            var len = num.Length;
             var pto = num.IndexOf(format.NumberDecimalSeparator);
             if (pto > -1) {
-                var fmt = "N" + (len - pto - 1).ToString();
+                var fmt = "N" + (num.Length - pto - 1).ToString();
                 num = numero.ToString(fmt, format);
                 num = num.TrimEnd('0');
                 num = num.TrimEnd(format.NumberDecimalSeparator.ToCharArray()[0]);
