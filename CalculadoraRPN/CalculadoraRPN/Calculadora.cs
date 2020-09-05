@@ -27,7 +27,8 @@ namespace CalculadoraRPN {
 				if (comando == "Help") {
 					this.tela.help();
 				} else if (comando == "Menu") {
-					menu();
+					this.tela.menu(ref this.format);
+					this.tela = new Tela(this.format, 41, this.operacoes);
 				} else if (comando == "Enter") {
 					add_operacao();
 				} else if (comando == "Delete") {
@@ -37,33 +38,6 @@ namespace CalculadoraRPN {
 				}
 
 			} while (key.Key != ConsoleKey.Escape);
-		}
-
-		/// <summary>
-		/// Menu para selecionar separador decimal entre ponto ou vírgula
-		/// </summary>
-		void menu() {
-			ConsoleKeyInfo k;
-			string resp = "";
-
-			Console.Clear();
-			Console.WriteLine("Separador Decimal (. = Ponto, , = Vírgula):");
-
-			while (resp != "." && resp != ",") {
-				k = Console.ReadKey(true);
-				resp = k.KeyChar.ToString();
-				if (resp == ".") {
-					//this.format = new CultureInfo("en-US").NumberFormat;
-					this.format.NumberDecimalSeparator = ".";
-					this.format.NumberGroupSeparator = ",";
-				}
-				if (resp == ",") {
-					//this.format = new CultureInfo("pt-BR").NumberFormat;
-					this.format.NumberDecimalSeparator = ",";
-					this.format.NumberGroupSeparator = ".";
-				}
-			}
-			this.tela = new Tela(this.format, 41, this.operacoes);
 		}
 
 		/// <summary>

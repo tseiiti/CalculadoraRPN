@@ -137,5 +137,31 @@ namespace CalculadoraRPN {
 			Console.WriteLine("\nPressione qualquer tecla para voltar...");
 			Console.ReadKey(true);
 		}
+
+		/// <summary>
+		/// Menu para selecionar separador decimal entre ponto ou vírgula
+		/// </summary>
+		public void menu(ref NumberFormatInfo format) {
+			ConsoleKeyInfo k;
+			string resp = "";
+
+			Console.Clear();
+			Console.WriteLine("Separador Decimal (. = Ponto, , = Vírgula):");
+
+			while (resp != "." && resp != ",") {
+				k = Console.ReadKey(true);
+				resp = k.KeyChar.ToString();
+				if (resp == ".") {
+					//format = new CultureInfo("en-US").NumberFormat;
+					format.NumberDecimalSeparator = ".";
+					format.NumberGroupSeparator = ",";
+				}
+				if (resp == ",") {
+					//format = new CultureInfo("pt-BR").NumberFormat;
+					format.NumberDecimalSeparator = ",";
+					format.NumberGroupSeparator = ".";
+				}
+			}
+		}
 	}
 }
