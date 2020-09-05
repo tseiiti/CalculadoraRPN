@@ -4,25 +4,27 @@ using System.Globalization;
 
 namespace CalculadoraRPN {
 	class Tela {
-		public Tela() {
+		int tamanho;
 
+		public Tela(int tamanho) {
+			this.tamanho = tamanho;
 		}
 
-		public void exibir(List<Operacao> operacoes, NumberFormatInfo format, int tamanho) {
+		public void exibir(List<Operacao> operacoes, NumberFormatInfo format) {
 			Console.Clear();
 			Console.WriteLine("Calculadora RPN:");
 			var count = operacoes.Count;
-			var posic = "{0, " + tamanho.ToString() + "}";
+			var posic = "{0, " + this.tamanho.ToString() + "}";
 			Console.WriteLine(posic, "(lista: " + count.ToString() + ")");
 
-			Console.WriteLine(new String('-', tamanho));
+			Console.WriteLine(new String('-', this.tamanho));
 			for (int i = 0; i < 4; i++) {
 				var num = "";
 				if (count > 3 - i)
 					num = operacoes[count - 4 + i].get_numero(format);
 				Console.WriteLine(posic, num);
 			}
-			Console.WriteLine(new String('-', tamanho));
+			Console.WriteLine(new String('-', this.tamanho));
 		}
 
 		public void converte_tecla(NumberFormatInfo format, ConsoleKeyInfo key, ref string numero, ref string comando) {

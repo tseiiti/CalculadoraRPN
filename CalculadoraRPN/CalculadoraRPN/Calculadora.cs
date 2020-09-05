@@ -10,24 +10,22 @@ namespace CalculadoraRPN {
 		ConsoleKeyInfo key;
 		string numero;
 		string comando;
-		int tamanho;
 
 		public Calculadora() {
 			this.operacoes = new List<Operacao>();
 			this.format = new CultureInfo("pt-BR").NumberFormat;
 			this.format.NumberDecimalSeparator = ".";
 			this.format.NumberGroupSeparator = ",";
-			this.tela = new Tela();
+			this.tela = new Tela(41);
 			this.numero = "";
 			this.comando = "";
-			this.tamanho = 41;
 		}
 
 		public void executa() {
 			// Trata CTL+C
 			Console.TreatControlCAsInput = true;
 
-			this.tela.exibir(this.operacoes, this.format, this.tamanho);
+			this.tela.exibir(this.operacoes, this.format);
 			do {
 				this.key = Console.ReadKey(true);
 				this.tela.converte_tecla(this.format, this.key, ref this.numero, ref this.comando);
