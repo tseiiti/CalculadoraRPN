@@ -12,6 +12,14 @@ namespace CalculadoraRPN {
             this.numero = Convert.ToDecimal(numero, format);
         }
 
+        /// <summary>
+        /// formata o numero decimal no padrão G em 29 dígitos com 41 
+        /// posições. Acrescenta separador decimal e separador de 
+        /// grupo quando ponto e espaços a esquerda.
+        /// ex:                             1.234,56
+        /// </summary>
+        /// <param name="format"></param>
+        /// <returns>número formatado</returns>
         public string get_numero(NumberFormatInfo format) {
             var num = numero.ToString("G", format);
             var pto = num.IndexOf(format.NumberDecimalSeparator);

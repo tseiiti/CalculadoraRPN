@@ -7,36 +7,71 @@ namespace CalculadoraRPN {
 		List<Operacao> operacoes;
 		NumberFormatInfo format;
 		Tela tela;
-		ConsoleKeyInfo key;
 		string numero;
-		string comando;
 
 		public Calculadora() {
 			this.operacoes = new List<Operacao>();
-			this.format = new CultureInfo("pt-BR").NumberFormat;
-			this.format.NumberDecimalSeparator = ".";
-			this.format.NumberGroupSeparator = ",";
-			this.tela = new Tela(41);
-			this.numero = "";
-			this.comando = "";
+			this.format = new CultureInfo("pt-BR", false).NumberFormat;
 		}
 
 		public void executa() {
+			ConsoleKeyInfo key;
+			string comando = "";
+			this.numero = "";
+
 			// Trata CTL+C
 			Console.TreatControlCAsInput = true;
 
-			this.tela.exibir(this.operacoes, this.format);
+			this.tela = new Tela(this.format, 41, this.operacoes);
 			do {
-				this.key = Console.ReadKey(true);
-				this.tela.converte_tecla(this.format, this.key, ref this.numero, ref this.comando);
-				valida_tecla();
-			} while (this.key.Key != ConsoleKey.Escape);
+				key = Console.ReadKey(true);
+				this.tela.converte_tecla(key, ref comando, ref this.numero);
+
+				if (comando == "Enter") {
+					add_operacao();
+				} else if (comando == "Delete") {
+					del_operacao();
+				} else if (comando == "Menu") {
+					menu();
+				} else if ("+-*/".IndexOf(comando) != -1) {
+					aritmetica(comando);
+				}
+
+			} while (key.Key != ConsoleKey.Escape);
 		}
 
-		private void valida_tecla() {
-			Console.WriteLine(this.numero + " " + this.comando);
+		/// <summary>
+		/// Menu para selecionar separador decimal entre ponto ou vírgula
+		/// </summary>
+		void menu() {
+			ConsoleKeyInfo k;
+			string resp = "";
+
+			Console.Clear();
+			Console.WriteLine("Separador Decimal (. = Ponto, , = Vírgula):");
+
+			while (resp != "." && resp != ",") {
+				k = Console.ReadKey(true);
+				resp = k.KeyChar.ToString();
+				if (resp == ".") {
+					//this.format = new CultureInfo("en-US").NumberFormat;
+					this.format.NumberDecimalSeparator = ".";
+					this.format.NumberGroupSeparator = ",";
+				}
+				if (resp == ",") {
+					//this.format = new CultureInfo("pt-BR").NumberFormat;
+					this.format.NumberDecimalSeparator = ",";
+					this.format.NumberGroupSeparator = ".";
+				}
+			}
+			this.tela = new Tela(this.format, 41, this.operacoes);
 		}
 
+		/// <summary>
+		/// Adicionar um novo número na lista de operações.
+		/// Caso o número a ser adicionado seja vazio, repete o último 
+		/// número da lista.
+		/// </summary>
 		void add_operacao() {
 			var count = this.operacoes.Count;
 			if (this.numero == this.format.CurrencyDecimalSeparator.ToString())
@@ -49,19 +84,31 @@ namespace CalculadoraRPN {
 				this.operacoes.Add(new Operacao(this.numero, this.format));
 				this.numero = "";
 			}
-			this.tela.exibir(this.operacoes, this.format, this.tamanho);
+			this.tela.exibir(this.operacoes);
 		}
 
+		/// <summary>
+		/// Exclui o número em preenchimento.
+		/// Caso o número em preenchimento já esteja vazio, exclui o último 
+		/// número da lista.
+		/// </summary>
 		void del_operacao() {
 			if (this.numero != "") this.numero = "";
 			else if (this.operacoes.Count > 0)
 				this.operacoes.RemoveAt(this.operacoes.Count - 1);
-			this.tela.exibir(this.operacoes, this.format, this.tamanho);
+			this.tela.exibir(this.operacoes);
 		}
 
-		void aritimetica(string operacao) {
+		/// <summary>
+		/// Executa uma operação aritmética entre o número digitado e o último 
+		/// número da lista. Caso o número digitado esteja vazio, executa a 
+		/// operação entre o último e o penúltimo número da lista.
+		/// </summary>
+		/// <param name="operacao">atualmente pode ser "+", "-", "*" ou "/"</param>
+		void aritmetica(string operacao) {
 			int count = this.operacoes.Count;
 
+			// permite calcular com os números que estão na tela
 			if (this.numero == "" && count > 1) {
 				this.numero = this.operacoes[count - 1].get_numero(this.format);
 				this.operacoes.RemoveAt(count - 1);
@@ -79,9 +126,7 @@ namespace CalculadoraRPN {
 					this.operacoes[count - 1].divisao(this.numero, this.format);
 				}
 				this.numero = "";
-				this.tela.exibir(this.operacoes, this.format, this.tamanho);
-			} else if (this.numero != "") {
-				add_operacao();
+				this.tela.exibir(this.operacoes);
 			} else {
 				Console.WriteLine("erro");
 			}
