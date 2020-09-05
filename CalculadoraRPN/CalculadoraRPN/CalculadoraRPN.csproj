@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
-    <StartupObject></StartupObject>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <StartupObject>CalculadoraRPN.Program</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>

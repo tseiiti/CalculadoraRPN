@@ -11,7 +11,7 @@ namespace CalculadoraRPN {
 
 		public Calculadora() {
 			this.operacoes = new List<Operacao>();
-			this.format = new CultureInfo("pt-BR", false).NumberFormat;
+			this.format = new CultureInfo("pt-BR").NumberFormat;
 		}
 
 		public void executa() {
@@ -19,45 +19,24 @@ namespace CalculadoraRPN {
 			string comando = "";
 			this.numero = "";
 
-			// Trata CTL+C
-			Console.TreatControlCAsInput = true;
-
 			this.tela = new Tela(this.format, 41, this.operacoes);
 			do {
 				key = Console.ReadKey(true);
 				this.tela.converte_tecla(key, ref comando, ref this.numero);
 
 				if (comando == "Help") {
-					help();
+					this.tela.help();
 				} else if (comando == "Menu") {
 					menu();
 				} else if (comando == "Enter") {
 					add_operacao();
 				} else if (comando == "Delete") {
 					del_operacao();
-				} else if ("+-*/pr".IndexOf(comando) != -1) {
+				} else if ("+-*/prsct".IndexOf(comando) != -1) {
 					aritmetica(comando);
 				}
 
 			} while (key.Key != ConsoleKey.Escape);
-		}
-
-		/// <summary>
-		/// Apresenta menu de ajuda
-		/// </summary>
-		void help() {
-			Console.Clear();
-			Console.WriteLine("Tecla H.....: Help");
-			Console.WriteLine("Tecla M.....: Menu");
-			Console.WriteLine("Tecla Delete: Exclui último número");
-			Console.WriteLine("Tecla +.....: Adição");
-			Console.WriteLine("Tecla -.....: Subtração");
-			Console.WriteLine("Tecla *.....: Multiplicação");
-			Console.WriteLine("Tecla /.....: Divisão");
-			Console.WriteLine("Tecla P.....: Potênciação");
-			Console.WriteLine("Tecla R.....: Raiz quadrada");
-			Console.WriteLine("\nPressione qualquer tecla para voltar...");
-			Console.ReadKey(true);
 		}
 
 		/// <summary>
@@ -128,13 +107,11 @@ namespace CalculadoraRPN {
 		void aritmetica(string operacao) {
 			int count = this.operacoes.Count;
 
-			// raiz quadrada por padrão
-			if (operacao == "r" && this.numero == "") {
-				this.numero = "2";
-			}
-
 			// permite calcular com os números que estão na tela
-			if (this.numero == "" && count > 1) {
+			if (this.numero != "" && "sct".IndexOf(operacao) != -1) {
+				add_operacao();
+				count++;
+			} else if (this.numero == "" && count > 1 && operacao != "r") {
 				this.numero = this.operacoes[count - 1].get_numero(this.format);
 				this.operacoes.RemoveAt(count - 1);
 				count--;
@@ -152,9 +129,14 @@ namespace CalculadoraRPN {
 				} else if (operacao == "p") {
 					this.operacoes[count - 1].potencia(this.numero, this.format);
 				} else if (operacao == "r") {
-					var aux = 1 / Convert.ToDecimal(this.numero, this.format);
-					this.numero = new Operacao(aux).get_numero(this.format);
-					this.operacoes[count - 1].potencia(this.numero, this.format);
+					if (this.numero == "") this.numero = "2"; // raiz quadrada por padrão
+					this.operacoes[count - 1].raiz(this.numero, this.format);
+				} else if (operacao == "s") {
+					this.operacoes[count - 1].seno();
+				} else if (operacao == "c") {
+					this.operacoes[count - 1].coseno();
+				} else if (operacao == "t") {
+					this.operacoes[count - 1].tangente();
 				}
 				this.numero = "";
 				this.tela.exibir(this.operacoes);

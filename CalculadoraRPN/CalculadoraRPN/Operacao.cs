@@ -76,6 +76,31 @@ namespace CalculadoraRPN {
             if (outro_numero != "")
                 potencia(Convert.ToDecimal(outro_numero, format));
         }
-        
+
+        public void raiz(decimal outro_numero) {
+            potencia(1 / outro_numero);
+        }
+        public void raiz(string outro_numero, NumberFormatInfo format) {
+            if (outro_numero != "") {
+                raiz(Convert.ToDecimal(outro_numero, format));
+            }
+        }
+
+        public void seno() {
+            this.numero = Convert.ToDecimal(
+                Math.Sin(Math.PI * decimal.ToDouble(this.numero) / 180)
+            );
+        }
+        public void coseno() {
+            this.numero = Convert.ToDecimal(
+                Math.Cos(Math.PI * decimal.ToDouble(this.numero) / 180)
+            );
+        }
+        public void tangente() {
+            this.numero = Convert.ToDecimal(
+                Math.Tan(Math.PI * decimal.ToDouble(this.numero) / 180)
+            );
+        }
+
     }
 }

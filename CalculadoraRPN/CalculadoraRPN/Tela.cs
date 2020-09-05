@@ -25,6 +25,7 @@ namespace CalculadoraRPN {
 		public void exibir(List<Operacao> operacoes) {
 			Console.Clear();
 			Console.WriteLine("Calculadora RPN:");
+			Console.WriteLine("Tecla H: Ajuda");
 			var count = operacoes.Count;
 			var posic = "{0, " + this.tamanho.ToString() + "}";
 			Console.WriteLine(posic, "(lista: " + count.ToString() + ")");
@@ -84,6 +85,12 @@ namespace CalculadoraRPN {
 				comando = "p"; // potênciação
 			} else if (keyInfo.Key == ConsoleKey.R) {
 				comando = "r"; // raiz quadrada
+			} else if (keyInfo.Key == ConsoleKey.S) {
+				comando = "s"; // seno
+			} else if (keyInfo.Key == ConsoleKey.C) {
+				comando = "c"; // coseno
+			} else if (keyInfo.Key == ConsoleKey.T) {
+				comando = "t"; // tangente
 
 			} else if (char.IsDigit(keyInfo.KeyChar)) { // números
 				aux = keyInfo.KeyChar.ToString();
@@ -107,6 +114,28 @@ namespace CalculadoraRPN {
 				if (numero.Length > 1)
 					numero = numero.Substring(0, numero.Length - 1);
 			} else numero += aux;
+		}
+
+		/// <summary>
+		/// Apresenta menu de ajuda
+		/// </summary>
+		public void help() {
+			Console.Clear();
+			Console.WriteLine("Tecla H.....: Help");
+			Console.WriteLine("Tecla M.....: Menu");
+			Console.WriteLine("Tecla Delete: Exclui último número");
+			Console.WriteLine("Tecla +.....: Adição");
+			Console.WriteLine("Tecla -.....: Subtração");
+			Console.WriteLine("Tecla *.....: Multiplicação");
+			Console.WriteLine("Tecla /.....: Divisão");
+			Console.WriteLine("Tecla P.....: Potênciação");
+			Console.WriteLine("Tecla S.....: Seno");
+			Console.WriteLine("Tecla C.....: Coseno");
+			Console.WriteLine("Tecla T.....: Tangente");
+			Console.WriteLine("Tecla R.....: Raiz quadrada");
+			Console.WriteLine("Tecla Esc...: Sair");
+			Console.WriteLine("\nPressione qualquer tecla para voltar...");
+			Console.ReadKey(true);
 		}
 	}
 }
