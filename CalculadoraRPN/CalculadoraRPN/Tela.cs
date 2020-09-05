@@ -54,11 +54,12 @@ namespace CalculadoraRPN {
 			//comando += keyInfo.Key.ToString();
 
 			var aux = "";
-			if (keyInfo.Key == ConsoleKey.Spacebar) {
+			if (keyInfo.Key == ConsoleKey.H) {
+				comando = "Help";
+			} else if (keyInfo.Key == ConsoleKey.Help) {
+				comando = "Help";
+			} else if (keyInfo.Key == ConsoleKey.M) {
 				comando = "Menu";
-			} else if (keyInfo.Key == ConsoleKey.A) {
-				Console.WriteLine(this.format.NumberDecimalSeparator);
-
 			} else if (keyInfo.Key == ConsoleKey.Enter) {
 				comando = "Enter";
 			} else if (keyInfo.Key == ConsoleKey.Delete) {
@@ -79,6 +80,10 @@ namespace CalculadoraRPN {
 				comando = "/";
 			} else if (keyInfo.Key == ConsoleKey.Oem2) {
 				comando = "/";
+			} else if (keyInfo.Key == ConsoleKey.P) {
+				comando = "p"; // potênciação
+			} else if (keyInfo.Key == ConsoleKey.R) {
+				comando = "r"; // raiz quadrada
 
 			} else if (char.IsDigit(keyInfo.KeyChar)) { // números
 				aux = keyInfo.KeyChar.ToString();
@@ -89,11 +94,11 @@ namespace CalculadoraRPN {
 			} else if (keyInfo.Key == ConsoleKey.Backspace) {
 				aux = "\b";
 			} else {
-				Console.WriteLine("\n\n" + keyInfo.Key.ToString());
+				Console.WriteLine("\n" + keyInfo.Key.ToString());
 			}
 
 			// exibe o número na tela
-				Console.Write(aux);
+			Console.Write(aux);
 
 			// completa o número digitado
 			if (aux == "\b") {

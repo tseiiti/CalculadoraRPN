@@ -27,17 +27,37 @@ namespace CalculadoraRPN {
 				key = Console.ReadKey(true);
 				this.tela.converte_tecla(key, ref comando, ref this.numero);
 
-				if (comando == "Enter") {
+				if (comando == "Help") {
+					help();
+				} else if (comando == "Menu") {
+					menu();
+				} else if (comando == "Enter") {
 					add_operacao();
 				} else if (comando == "Delete") {
 					del_operacao();
-				} else if (comando == "Menu") {
-					menu();
-				} else if ("+-*/".IndexOf(comando) != -1) {
+				} else if ("+-*/pr".IndexOf(comando) != -1) {
 					aritmetica(comando);
 				}
 
 			} while (key.Key != ConsoleKey.Escape);
+		}
+
+		/// <summary>
+		/// Apresenta menu de ajuda
+		/// </summary>
+		void help() {
+			Console.Clear();
+			Console.WriteLine("Tecla H.....: Help");
+			Console.WriteLine("Tecla M.....: Menu");
+			Console.WriteLine("Tecla Delete: Exclui último número");
+			Console.WriteLine("Tecla +.....: Adição");
+			Console.WriteLine("Tecla -.....: Subtração");
+			Console.WriteLine("Tecla *.....: Multiplicação");
+			Console.WriteLine("Tecla /.....: Divisão");
+			Console.WriteLine("Tecla P.....: Potênciação");
+			Console.WriteLine("Tecla R.....: Raiz quadrada");
+			Console.WriteLine("\nPressione qualquer tecla para voltar...");
+			Console.ReadKey(true);
 		}
 
 		/// <summary>
@@ -108,6 +128,11 @@ namespace CalculadoraRPN {
 		void aritmetica(string operacao) {
 			int count = this.operacoes.Count;
 
+			// raiz quadrada por padrão
+			if (operacao == "r" && this.numero == "") {
+				this.numero = "2";
+			}
+
 			// permite calcular com os números que estão na tela
 			if (this.numero == "" && count > 1) {
 				this.numero = this.operacoes[count - 1].get_numero(this.format);
@@ -124,6 +149,12 @@ namespace CalculadoraRPN {
 					this.operacoes[count - 1].multiplicacao(this.numero, this.format);
 				} else if (operacao == "/") {
 					this.operacoes[count - 1].divisao(this.numero, this.format);
+				} else if (operacao == "p") {
+					this.operacoes[count - 1].potencia(this.numero, this.format);
+				} else if (operacao == "r") {
+					var aux = 1 / Convert.ToDecimal(this.numero, this.format);
+					this.numero = new Operacao(aux).get_numero(this.format);
+					this.operacoes[count - 1].potencia(this.numero, this.format);
 				}
 				this.numero = "";
 				this.tela.exibir(this.operacoes);

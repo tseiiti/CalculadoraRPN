@@ -21,16 +21,16 @@ namespace CalculadoraRPN {
         /// <param name="format"></param>
         /// <returns>número formatado</returns>
         public string get_numero(NumberFormatInfo format) {
-            var num = numero.ToString("G", format);
+            var num = this.numero.ToString("G", format);
             var pto = num.IndexOf(format.NumberDecimalSeparator);
             if (pto > -1) {
                 var fmt = "N" + (num.Length - pto - 1).ToString();
-                num = numero.ToString(fmt, format);
+                num = this.numero.ToString(fmt, format);
                 num = num.TrimEnd('0');
                 num = num.TrimEnd(format.NumberDecimalSeparator.ToCharArray()[0]);
             } else {
                 var fmt = "##" + format.NumberDecimalSeparator + "#";
-                num = numero.ToString(fmt, format);
+                num = this.numero.ToString(fmt, format);
             }
             return num;
         }
@@ -67,5 +67,15 @@ namespace CalculadoraRPN {
                 divisao(Convert.ToDecimal(outro_numero, format));
         }
 
+        public void potencia(decimal outro_numero) {
+            this.numero = Convert.ToDecimal(
+                Math.Pow(decimal.ToDouble(this.numero), decimal.ToDouble(outro_numero))
+            );
+        }
+        public void potencia(string outro_numero, NumberFormatInfo format) {
+            if (outro_numero != "")
+                potencia(Convert.ToDecimal(outro_numero, format));
+        }
+        
     }
 }
