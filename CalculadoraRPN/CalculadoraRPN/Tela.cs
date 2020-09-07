@@ -7,38 +7,33 @@ namespace CalculadoraRPN {
 		int tamanho;
 		NumberFormatInfo format;
 
-		public Tela(NumberFormatInfo format, int tamanho) {
+		public Tela(NumberFormatInfo format, List<Numero> numeros) {
+			this.tamanho = 41;
 			this.format = format;
-			this.tamanho = tamanho;
-		}
-
-		public Tela(NumberFormatInfo format, int tamanho, List<Operacao> operacoes) {
-			this.format = format;
-			this.tamanho = tamanho;
-			exibir(operacoes);
+			exibir(numeros, "");
 		}
 
 		/// <summary>
-		/// Exibe na tela as operações da lista
+		/// Exibe na tela os números da lista
 		/// </summary>
-		/// <param name="operacoes"></param>
-		public void exibir(List<Operacao> operacoes) {
+		/// <param name="numeros"></param>
+		public void exibir(List<Numero> numeros, string numero) {
 			Console.Clear();
-			Console.WriteLine("Calculadora RPN:");
-			Console.WriteLine("Tecla H: Ajuda");
-			var count = operacoes.Count;
-			var posic = "{0, " + this.tamanho.ToString() + "}";
+			Console.WriteLine("Calculadora RPN (a = ajuda):");
+			var count = numeros.Count;
+			var posic = "{0, " + tamanho.ToString() + "}";
 			Console.WriteLine(posic, "(lista: " + count.ToString() + ")");
 
 			// exibe somente as 4 últimas posições da lista
-			Console.WriteLine(new String('-', this.tamanho));
+			Console.WriteLine(new String('-', tamanho));
 			for (int i = 0; i < 4; i++) {
 				var num = "";
 				if (count > 3 - i)
-					num = operacoes[count - 4 + i].get_numero(this.format);
+					num = numeros[count - 4 + i].get_numero(format);
 				Console.WriteLine(posic, num);
 			}
-			Console.WriteLine(new String('-', this.tamanho));
+			Console.WriteLine(new String('-', tamanho));
+			Console.Write(numero);
 		}
 
 		/// <summary>
@@ -47,61 +42,67 @@ namespace CalculadoraRPN {
 		/// <param name="keyInfo"></param>
 		/// <param name="comando"></param>
 		/// <param name="numero"></param>
-		public void converte_tecla(ConsoleKeyInfo keyInfo, ref string comando, ref string numero) {
-			comando = keyInfo.Key.ToString();
-			//if ((keyInfo.Modifiers & ConsoleModifiers.Alt) != 0) comando = "ALT + ";
-			//if ((keyInfo.Modifiers & ConsoleModifiers.Shift) != 0) comando = "SHIFT + ";
-			//if ((keyInfo.Modifiers & ConsoleModifiers.Control) != 0) comando = "CTL + ";
-			//comando += keyInfo.Key.ToString();
-
+		public Comando converte_tecla(ref string numero) {
+			ConsoleKeyInfo keyInfo = Console.ReadKey(true);
 			var aux = "";
-			if (keyInfo.Key == ConsoleKey.H) {
-				comando = "Help";
-			} else if (keyInfo.Key == ConsoleKey.Help) {
-				comando = "Help";
-			} else if (keyInfo.Key == ConsoleKey.M) {
-				comando = "Menu";
-			} else if (keyInfo.Key == ConsoleKey.Enter) {
-				comando = "Enter";
-			} else if (keyInfo.Key == ConsoleKey.Delete) {
-				comando = "Delete";
-			} else if (keyInfo.Key == ConsoleKey.Add) {
-				comando = "+";
-			} else if (keyInfo.Key == ConsoleKey.OemPlus) {
-				comando = "+";
-			} else if (keyInfo.Key == ConsoleKey.Subtract) {
-				comando = "-";
-			} else if (keyInfo.Key == ConsoleKey.OemMinus) {
-				comando = "-";
-			} else if (keyInfo.Key == ConsoleKey.Multiply) {
-				comando = "*";
-			} else if ((keyInfo.Modifiers & ConsoleModifiers.Shift) != 0 && keyInfo.Key == ConsoleKey.D8) {
-				comando = "*";
-			} else if (keyInfo.Key == ConsoleKey.Divide) {
-				comando = "/";
-			} else if (keyInfo.Key == ConsoleKey.Oem2) {
-				comando = "/";
-			} else if (keyInfo.Key == ConsoleKey.P) {
-				comando = "p"; // potênciação
-			} else if (keyInfo.Key == ConsoleKey.R) {
-				comando = "r"; // raiz quadrada
-			} else if (keyInfo.Key == ConsoleKey.S) {
-				comando = "s"; // seno
-			} else if (keyInfo.Key == ConsoleKey.C) {
-				comando = "c"; // coseno
-			} else if (keyInfo.Key == ConsoleKey.T) {
-				comando = "t"; // tangente
+			Comando comando = Comando.None;
 
-			} else if (char.IsDigit(keyInfo.KeyChar)) { // números
+			if (keyInfo.Key == ConsoleKey.A) {
+				comando = Comando.Ajuda;
+			} else if (keyInfo.Key == ConsoleKey.Help) {
+				comando = Comando.Ajuda;
+			} else if (keyInfo.Key == ConsoleKey.M) {
+				comando = Comando.Menu;
+			} else if (keyInfo.Key == ConsoleKey.Escape) {
+				comando = Comando.Sair;
+			} else if (keyInfo.Key == ConsoleKey.Enter) {
+				comando = Comando.Enter;
+			} else if (keyInfo.Key == ConsoleKey.Delete) {
+				comando = Comando.Delete;
+			} else if (keyInfo.Key == ConsoleKey.Add) {
+				comando = Comando.Adição;
+			} else if (keyInfo.Key == ConsoleKey.OemPlus) {
+				comando = Comando.Adição;
+			} else if (keyInfo.Key == ConsoleKey.Subtract) {
+				comando = Comando.Subtração;
+			} else if (keyInfo.Key == ConsoleKey.OemMinus) {
+				comando = Comando.Subtração;
+			} else if (keyInfo.Key == ConsoleKey.Multiply) {
+				comando = Comando.Multiplicação;
+			} else if ((keyInfo.Modifiers & ConsoleModifiers.Shift) != 0 && keyInfo.Key == ConsoleKey.D8) {
+				comando = Comando.Multiplicação;
+			} else if (keyInfo.Key == ConsoleKey.Divide) {
+				comando = Comando.Divisão;
+			} else if (keyInfo.Key == ConsoleKey.Oem2) {
+				comando = Comando.Divisão;
+			} else if (keyInfo.Key == ConsoleKey.P) {
+				comando = Comando.Potenciação;
+			} else if (keyInfo.Key == ConsoleKey.R) {
+				comando = Comando.Radiciação;
+			} else if (keyInfo.Key == ConsoleKey.S) {
+				comando = Comando.Seno;
+			} else if (keyInfo.Key == ConsoleKey.C) {
+				comando = Comando.Coseno;
+			} else if (keyInfo.Key == ConsoleKey.T) {
+				comando = Comando.Tangente;
+			} else if ((keyInfo.Modifiers & ConsoleModifiers.Control) != 0 && keyInfo.Key == ConsoleKey.Z) {
+				comando = Comando.Desfazer;
+			} else if ((keyInfo.Modifiers & ConsoleModifiers.Control) != 0 && keyInfo.Key == ConsoleKey.Y) {
+				comando = Comando.Refazer;
+
+			// Números
+			} else if (char.IsDigit(keyInfo.KeyChar)) {
 				aux = keyInfo.KeyChar.ToString();
-			} else if (char.IsPunctuation(keyInfo.KeyChar)) { // ponto decimal
-				if (numero.IndexOf(this.format.NumberDecimalSeparator) == -1)
+
+			// Ponto decimal
+			} else if (char.IsPunctuation(keyInfo.KeyChar)) {
+				if (numero.IndexOf(format.NumberDecimalSeparator) == -1)
 					aux = format.NumberDecimalSeparator;
 
 			} else if (keyInfo.Key == ConsoleKey.Backspace) {
 				aux = "\b";
 			} else {
-				Console.WriteLine("\n" + keyInfo.Key.ToString());
+				Console.WriteLine("\n" + aux);
 			}
 
 			// exibe o número na tela
@@ -114,14 +115,16 @@ namespace CalculadoraRPN {
 				if (numero.Length > 1)
 					numero = numero.Substring(0, numero.Length - 1);
 			} else numero += aux;
+
+			return comando;
 		}
 
 		/// <summary>
 		/// Apresenta menu de ajuda
 		/// </summary>
-		public void help() {
+		public void ajuda() {
 			Console.Clear();
-			Console.WriteLine("Tecla H.....: Help");
+			Console.WriteLine("Tecla A.....: Ajuda");
 			Console.WriteLine("Tecla M.....: Menu");
 			Console.WriteLine("Tecla Delete: Exclui último número");
 			Console.WriteLine("Tecla +.....: Adição");
@@ -141,16 +144,16 @@ namespace CalculadoraRPN {
 		/// <summary>
 		/// Menu para selecionar separador decimal entre ponto ou vírgula
 		/// </summary>
-		public void menu(ref NumberFormatInfo format) {
-			ConsoleKeyInfo k;
+		public NumberFormatInfo menu() {
+			ConsoleKeyInfo keyInfo;
 			string resp = "";
-
+			
 			Console.Clear();
 			Console.WriteLine("Separador Decimal (. = Ponto, , = Vírgula):");
 
 			while (resp != "." && resp != ",") {
-				k = Console.ReadKey(true);
-				resp = k.KeyChar.ToString();
+				keyInfo = Console.ReadKey(true);
+				resp = keyInfo.KeyChar.ToString();
 				if (resp == ".") {
 					//format = new CultureInfo("en-US").NumberFormat;
 					format.NumberDecimalSeparator = ".";
@@ -162,6 +165,8 @@ namespace CalculadoraRPN {
 					format.NumberGroupSeparator = ".";
 				}
 			}
+
+			return format;
 		}
 	}
 }
